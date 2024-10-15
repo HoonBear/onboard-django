@@ -50,8 +50,6 @@ class DibsGroupViewSet(viewsets.GenericViewSet):
     def retrieve(self, request, pk) -> Response:
         dibsGroup = get_object_or_404(DibsGroup, pk=pk)
 
-        # Todo. 하위에 찜한 상품 나오게 하기
-
         serializer = self.get_serializer(dibsGroup)
         return Response(serializer.data)
 
