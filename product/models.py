@@ -5,6 +5,8 @@ class Product(models.Model):
     name = models.CharField(max_length=100)
     thumbnail = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    modifiedAt = models.DateTimeField(auto_now=True)
 
     class Meta:
         abstract = False # true 면 추상, 테이블 안만듬
