@@ -24,7 +24,7 @@ from product.views import ProductViewSet
 
 router = SimpleRouter()
 
-router.register('users', UserViewSet, basename='users')
+router.register('user', UserViewSet, basename='user')
 router.register('product', ProductViewSet, basename='product')
 router.register('dibs-group', DibsGroupViewSet, basename='dibs-group')
 router.register('dibs-detail', DibsDetailViewSet, basename='dibs-detail')

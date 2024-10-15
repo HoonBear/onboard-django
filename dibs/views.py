@@ -38,17 +38,19 @@ class DibsGroupViewSet(viewsets.GenericViewSet):
 
         return Response(status=status.HTTP_200_OK)
 
-    @action(["GET"], False, url_path=r"list")
-    def getDibsGroups(self, request) -> Response:
+    # @action(["GET"], False, url_path=r"list")
+    def list(self, request) -> Response:
         querySet: QuerySet[DibsGroup] = (
             self.get_queryset()
         )
         serializer = self.get_serializer(querySet, many=True)
         return Response(serializer.data)
 
-    @action(["GET"], True, url_path=r"detail")
-    def getDibsGroup(self, request, pk) -> Response:
+    # @action(["GET"], True, url_path=r"detail")
+    def retrieve(self, request, pk) -> Response:
         dibsGroup = get_object_or_404(DibsGroup, pk=pk)
+
+        # Todo. 하위에 찜한 상품 나오게 하기
 
         serializer = self.get_serializer(dibsGroup)
         return Response(serializer.data)
