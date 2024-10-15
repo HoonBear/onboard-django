@@ -1,11 +1,13 @@
+from django.db import IntegrityError
 from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from dibs.models import DibsGroup
-from dibs.serializers import DibsGroupSerializer
+from dibs.models import DibsGroup, DibsDetail
+from dibs.serializers import DibsGroupSerializer, DibsDetailSerializer
+from product.models import Product
 from user.models import User
 
 
@@ -19,15 +21,15 @@ class DibsGroupViewSet(viewsets.GenericViewSet):
 
     @staticmethod
     def create(request, *args, **kwargs):
-        user_id = request.data["userId"]
-        user = get_object_or_404(User, pk=user_id)
+        userId = request.data["userId"]
+        user = get_object_or_404(User, pk=userId)
 
-        dibs_group = DibsGroup.objects.create(
+        dibsGroup = DibsGroup.objects.create(
             name=request.data['name'],
             user=user,
         )
 
-        return Response({"id": dibs_group.id}, status=status.HTTP_201_CREATED)
+        return Response({"id": dibsGroup.id}, status=status.HTTP_201_CREATED)
 
     @action(["GET"], False, url_path=r"list")
     def getDibsGroups(self, request) -> Response:
@@ -43,3 +45,28 @@ class DibsGroupViewSet(viewsets.GenericViewSet):
 
         serializer = self.get_serializer(dibsGroup)
         return Response(serializer.data)
+
+class DibsDetailViewSet(viewsets.GenericViewSet):
+    serializer_class = DibsDetailSerializer
+
+    def get_queryset(self):
+        queryset = DibsDetail.objects.all()
+        return queryset
+
+    @staticmethod
+    def create(request, *args, **kwargs):
+        dibsGroupId = request.data["dibsGroupId"]
+        dibsGroup = get_object_or_404(DibsGroup, pk=dibsGroupId)
+
+        productId = request.data["productId"]
+        product = get_object_or_404(Product, pk=productId)
+
+        try:
+            dibsDetail = DibsDetail.objects.create(
+                dibsGroup=dibsGroup,
+                product=product,
+            )
+        except IntegrityError:
+            return Response("duplicated", status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({"id": dibsDetail.id}, status=status.HTTP_201_CREATED)

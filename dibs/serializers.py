@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import DibsGroup
+from .models import DibsGroup, DibsDetail
 
 
 class DibsGroupSerializer(serializers.Serializer):
@@ -20,3 +20,14 @@ class DibsGroupSerializer(serializers.Serializer):
     #         user=validated_data['user'],
     #     )
     #     return dibsGroup
+
+class DibsDetailSerializer(serializers.Serializer):
+    class Meta:
+        model = DibsDetail
+        fields = ('id', 'dibsGroup', 'product', 'createdAt', 'modifiedAt')
+
+        id = serializers.IntegerField()
+        get_dibs_group = serializers.SerializerMethodField
+        get_product = serializers.SerializerMethodField
+        createdAt = serializers.DateTimeField
+        modifiedAt = serializers.DateTimeField

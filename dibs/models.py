@@ -35,5 +35,5 @@ class DibsDetail(models.Model):
         ordering = ('id',)
 
         constraints = (
-
+            models.UniqueConstraint(fields=("dibsGroup","product",), name="unique_dibs_group_product"),
         )
