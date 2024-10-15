@@ -18,6 +18,7 @@ from os.path import basename
 
 from rest_framework.routers import SimpleRouter
 
+from dibs.views import DibsGroupViewSet
 from user.views import UserViewSet
 from product.views import ProductViewSet
 
@@ -25,5 +26,6 @@ router = SimpleRouter()
 
 router.register('users', UserViewSet, basename='users')
 router.register('product', ProductViewSet, basename='product')
+router.register('dibs-group', DibsGroupViewSet, basename='dibs-group')
 
 urlpatterns = router.urls

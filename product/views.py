@@ -1,5 +1,5 @@
 from django.db.models import QuerySet
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -27,17 +27,14 @@ class ProductViewSet(viewsets.GenericViewSet):
     @action(["GET"], False, url_path=r"list")
     def getProducts(self, request) -> Response:
         querySet: QuerySet[Product] = (
-            self.get_queryset().all()
+            self.get_queryset()
         )
         serializer = self.get_serializer(querySet, many=True)
         return Response(serializer.data)
 
-    @action(["GET"], False, url_path=r"(?P<pk>\w+)")
+    @action(["GET"], True, url_path=r"detail")
     def getUser(self, request, pk) -> Response:
-        querySet: QuerySet[Product] = (
-            self.get_queryset()
-            .filter(id=pk)
-            .first()
-        )
-        serializer = self.get_serializer(querySet)
+        product = get_object_or_404(Product, pk=pk)
+
+        serializer = self.get_serializer(product)
         return Response(serializer.data)
