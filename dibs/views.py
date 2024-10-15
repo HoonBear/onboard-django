@@ -31,6 +31,13 @@ class DibsGroupViewSet(viewsets.GenericViewSet):
 
         return Response({"id": dibsGroup.id}, status=status.HTTP_201_CREATED)
 
+    @staticmethod
+    def destroy(request, pk: int) -> Response:
+        dibsGroup = get_object_or_404(DibsGroup, id=pk)
+        dibsGroup.delete()
+
+        return Response(status=status.HTTP_200_OK)
+
     @action(["GET"], False, url_path=r"list")
     def getDibsGroups(self, request) -> Response:
         querySet: QuerySet[DibsGroup] = (
