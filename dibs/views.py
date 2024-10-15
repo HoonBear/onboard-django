@@ -70,3 +70,10 @@ class DibsDetailViewSet(viewsets.GenericViewSet):
             return Response("duplicated", status=status.HTTP_400_BAD_REQUEST)
 
         return Response({"id": dibsDetail.id}, status=status.HTTP_201_CREATED)
+
+    @staticmethod
+    def destroy(request, pk: int) -> Response:
+        dibsDetail = get_object_or_404(DibsDetail, id=pk)
+        dibsDetail.delete()
+
+        return Response(status=status.HTTP_200_OK)
