@@ -24,4 +24,4 @@ class DibsGroupSerializer(serializers.Serializer):
     name = serializers.CharField()
     createdAt = serializers.DateTimeField()
     modifiedAt = serializers.DateTimeField()
-    dibsDetails = DibsDetailSerializer(many=True)
+    dibsDetails = DibsDetailSerializer(many=True, read_only=True)
