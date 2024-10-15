@@ -6,7 +6,7 @@ class DibsGroup(models.Model):
     createdAt = models.DateTimeField(auto_now_add=True)
     modifiedAt = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(
-        to="user.User", null=False, on_delete=models.CASCADE, related_name="user"
+        to="user.User", null=False, on_delete=models.CASCADE, related_name="dibGroups"
     )
 
     class Meta:
@@ -23,17 +23,14 @@ class DibsDetail(models.Model):
     modifiedAt = models.DateTimeField(auto_now=True)
 
     dibsGroup = models.ForeignKey(
-        to="DibsGroup", null=False, on_delete=models.CASCADE, related_name="dibsGroup"
+        to="dibs.DibsGroup", null=False, on_delete=models.CASCADE, related_name="dibsDetails"
     )
+
     product = models.ForeignKey(
-        to="product.Product", null=False, on_delete=models.CASCADE, related_name="product"
+        to="product.Product", null=False, on_delete=models.CASCADE, related_name="dibsDetails"
     )
 
     class Meta:
         db_table = 'dibs_detail'
         get_latest_by = 'createdAt'
         ordering = ('id',)
-
-        constraints = (
-            models.UniqueConstraint(fields=("dibsGroup","product",), name="unique_dibs_group_product"),
-        )
