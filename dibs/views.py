@@ -28,6 +28,9 @@ class DibsGroupViewSet(viewsets.GenericViewSet):
         else:
             raise exceptions.InvalidTokenError
 
+        if DibsGroup.objects.filter(name=request.data['name']).first() is not None:
+            return Response("duplicated name", status=status.HTTP_400_BAD_REQUEST)
+
         dibsGroup = DibsGroup.objects.create(
             name=request.data['name'],
             user=user,
