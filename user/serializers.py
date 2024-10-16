@@ -1,7 +1,8 @@
 import bcrypt
-
 from rest_framework import serializers
+
 from .models import User
+
 
 def encrypt_password(raw_password) -> str:
     """비밀번호 암호화"""

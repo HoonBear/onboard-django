@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from product.serializers import ProductSerializer
-from .models import DibsGroup, DibsDetail
+
 
 class DibsDetailSerializer(serializers.Serializer):
     # class Meta:

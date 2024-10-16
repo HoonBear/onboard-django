@@ -3,14 +3,12 @@ from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404
 from jwt import exceptions
 from rest_framework import viewsets, status
-from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from dibs.models import DibsGroup, DibsDetail
 from dibs.serializers import DibsGroupSerializer, DibsDetailSerializer
 from product.models import Product
-from user.models import User
 
 
 # Create your views here.

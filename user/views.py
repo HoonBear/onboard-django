@@ -1,19 +1,10 @@
-from django.contrib.auth import authenticate
 from django.db.models import QuerySet
-from django.shortcuts import get_object_or_404
-from django.utils import timezone
-from django.conf import settings
 from jwt import exceptions
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
 
-import jwt
-
-import server
 from server.authentication import JwtAuthentication
 from user.models import User
 from user.serializers import UserSerializer, check_password

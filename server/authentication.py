@@ -1,13 +1,13 @@
-import jwt
-
 from typing import Optional
+
+import jwt
+from django.conf import settings
 from django.utils import timezone
+from django.utils.encoding import smart_str
 from jwt import exceptions
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.request import Request
-from django.conf import settings
-from django.utils.encoding import smart_str
 from rest_framework_simplejwt import authentication
 
 from user.models import User

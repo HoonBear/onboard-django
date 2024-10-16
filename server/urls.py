@@ -14,13 +14,12 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from os.path import basename
 
 from rest_framework.routers import SimpleRouter
 
 from dibs.views import DibsGroupViewSet, DibsDetailViewSet
-from user.views import UserViewSet
 from product.views import ProductViewSet
+from user.views import UserViewSet
 
 router = SimpleRouter()
 
