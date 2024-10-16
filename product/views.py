@@ -1,6 +1,6 @@
 from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, status
+from rest_framework import status, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
@@ -27,9 +27,7 @@ class ProductViewSet(viewsets.GenericViewSet):
 
     # @action(["GET"], False, url_path=r"list")
     def list(self, request) -> Response:
-        querySet: QuerySet[Product] = (
-            self.get_queryset()
-        )
+        querySet: QuerySet[Product] = self.get_queryset()
         serializer = self.get_serializer(querySet, many=True)
         return Response(serializer.data)
 

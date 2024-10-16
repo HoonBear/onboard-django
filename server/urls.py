@@ -17,15 +17,15 @@ Including another URLconf
 
 from rest_framework.routers import SimpleRouter
 
-from dibs.views import DibsGroupViewSet, DibsDetailViewSet
+from dibs.views import DibsDetailViewSet, DibsGroupViewSet
 from product.views import ProductViewSet
 from user.views import UserViewSet
 
 router = SimpleRouter()
 
-router.register('user', UserViewSet, basename='user')
-router.register('product', ProductViewSet, basename='product')
-router.register('dibs-group', DibsGroupViewSet, basename='dibs-group')
-router.register('dibs-detail', DibsDetailViewSet, basename='dibs-detail')
+router.register("user", UserViewSet, basename="user")
+router.register("product", ProductViewSet, basename="product")
+router.register("dibs-group", DibsGroupViewSet, basename="dibs-group")
+router.register("dibs-detail", DibsDetailViewSet, basename="dibs-detail")
 
 urlpatterns = router.urls

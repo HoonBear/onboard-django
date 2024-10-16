@@ -68,15 +68,15 @@ class JwtAuthentication(BaseAuthentication):
 
     def authenticate(self, request):
 
-        auth_header = request.headers.get('Authorization')
+        auth_header = request.headers.get("Authorization")
 
         if not auth_header:
             return None  # 인증 정보가 없는 경우
 
         try:
             # 'Bearer <token>' 형식에서 토큰 추출
-            prefix, token = auth_header.split(' ')
-            if prefix.lower() != 'bearer':
+            prefix, token = auth_header.split(" ")
+            if prefix.lower() != "bearer":
                 return None
 
             # 토큰 검증
@@ -90,7 +90,12 @@ class JwtAuthentication(BaseAuthentication):
             user_id = payload.get(settings.SIMPLE_JWT["USER_ID_CLAIM"])
             user = User.objects.get(id=user_id)
 
-        except (ValueError, jwt.ExpiredSignatureError, jwt.DecodeError, User.DoesNotExist):
-            raise AuthenticationFailed('Invalid token or user not found.')
+        except (
+            ValueError,
+            jwt.ExpiredSignatureError,
+            jwt.DecodeError,
+            User.DoesNotExist,
+        ):
+            raise AuthenticationFailed("Invalid token or user not found.")
 
         return (user, token)  # (사용자, 토큰) 반환

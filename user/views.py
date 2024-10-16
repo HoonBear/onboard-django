@@ -1,13 +1,14 @@
 from django.db.models import QuerySet
 from jwt import exceptions
-from rest_framework import viewsets, status
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from server.authentication import JwtAuthentication
 from user.models import User
-from user.serializers import check_password, ReadUserSerializer, CreateUserSerializer
+from user.serializers import CreateUserSerializer, ReadUserSerializer, check_password
+
 
 class UserViewSet(viewsets.GenericViewSet):
     # serializer_class = UserSerializer
@@ -16,20 +17,9 @@ class UserViewSet(viewsets.GenericViewSet):
         queryset = User.objects.all()
         return queryset
 
-    def create(self, request, *args, **kwargs):
-        serializer = CreateUserSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        instance = serializer.save()
-
-        return Response({"id": instance.id}, status=status.HTTP_201_CREATED)
-
-
     # @action(["GET"], False, url_path=r"list")
     def list(self, request) -> Response:
-        querySet: QuerySet[User] = (
-            self.get_queryset()
-        )
+        querySet: QuerySet[User] = self.get_queryset()
         serializer = ReadUserSerializer(querySet, many=True)
         return Response(serializer.data)
 
@@ -43,7 +33,27 @@ class UserViewSet(viewsets.GenericViewSet):
         serializer = ReadUserSerializer(user)
         return Response(serializer.data)
 
-    @action(methods=['POST'], detail=False, url_path="login", permission_classes=[AllowAny])
+    @action(
+        methods=["POST"], detail=False, url_path="signup", permission_classes=[AllowAny]
+    )
+    def signup(self, request) -> Response:
+        serializer = CreateUserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user: User | None = User.objects.filter(
+            loginId=request.data.get("loginId")
+        ).first()
+
+        if user:
+            return Response("duplicated login id", status=status.HTTP_404_NOT_FOUND)
+
+        instance = serializer.save()
+
+        return Response({"id": instance.id}, status=status.HTTP_201_CREATED)
+
+    @action(
+        methods=["POST"], detail=False, url_path="login", permission_classes=[AllowAny]
+    )
     def login(self, request) -> Response:
         loginId: str | None = request.data.get("loginId")
         password: str | None = request.data.get("password")
@@ -58,9 +68,6 @@ class UserViewSet(viewsets.GenericViewSet):
         access_token = JwtAuthentication.issue_token(user.id)
 
         return Response(
-            {
-                "name": user.name,
-                "access_token": access_token
-            },
+            {"name": user.name, "access_token": access_token},
             status.HTTP_200_OK,
         )
