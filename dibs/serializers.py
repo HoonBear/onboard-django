@@ -4,9 +4,6 @@ from product.serializers import ProductSerializer
 
 
 class DibsDetailSerializer(serializers.Serializer):
-    # class Meta:
-    #     model = DibsDetail
-    #     fields = ('id', 'createdAt', 'modifiedAt')
 
     id = serializers.IntegerField()
     createdAt = serializers.DateTimeField
@@ -16,12 +13,13 @@ class DibsDetailSerializer(serializers.Serializer):
 
 class DibsGroupSerializer(serializers.Serializer):
 
-    # class Meta:
-    #     model = DibsGroup
-    #     fields = ('id', 'name', 'createdAt', 'modifiedAt', 'dibsDetails')
-
     id = serializers.IntegerField()
     name = serializers.CharField()
     createdAt = serializers.DateTimeField()
     modifiedAt = serializers.DateTimeField()
     dibsDetails = DibsDetailSerializer(many=True, read_only=True)
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['dibsDetails'] = representation['dibsDetails'][:4]
+        return representation
