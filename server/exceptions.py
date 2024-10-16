@@ -17,3 +17,11 @@ class DuplicatedUserLoginIdException(ServerApiException):
 class IdOrPasswordNotFoundException(ServerApiException):
     default_detail = "invalid id or password"
     status_code = status.HTTP_401_UNAUTHORIZED
+
+class DuplicatedDibsGroupNameException(ServerApiException):
+    default_detail = "duplicated dibs group name"
+    status_code = status.HTTP_400_BAD_REQUEST
+
+class DuplicatedDibsProduct(ServerApiException):
+    default_detail = "duplicated dibs product"
+    status_code = status.HTTP_400_BAD_REQUEST
