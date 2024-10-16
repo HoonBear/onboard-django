@@ -55,6 +55,7 @@ REST_FRAMEWORK = {
     ),
     # Set the authentication classes
     "DEFAULT_AUTHENTICATION_CLASSES": ("server.authentication.JwtAuthentication",),
+    "EXCEPTION_HANDLER": "server.exception_handler.server_exception_handler",
 }
 
 # 추가적인 JWT_AUTH 설정

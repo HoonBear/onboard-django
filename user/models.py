@@ -3,6 +3,9 @@ from django.db import models
 
 # Create your models here.
 class User(models.Model):
+    """회원 모델"""
+
+    objects = models.Manager()
     loginId = models.CharField(
         max_length=10,
         unique=True,

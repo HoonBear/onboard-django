@@ -1,34 +1,32 @@
 from django.db.models import QuerySet
-from jwt import exceptions
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
+from server.exceptions import DuplicatedUserLoginIdException, AuthorizationException, IdOrPasswordNotFoundException
 from server.authentication import JwtAuthentication
 from user.models import User
 from user.serializers import CreateUserSerializer, ReadUserSerializer, check_password
 
 
 class UserViewSet(viewsets.GenericViewSet):
-    # serializer_class = UserSerializer
 
     def get_queryset(self):
         queryset = User.objects.all()
         return queryset
 
-    # @action(["GET"], False, url_path=r"list")
     def list(self, request) -> Response:
         querySet: QuerySet[User] = self.get_queryset()
         serializer = ReadUserSerializer(querySet, many=True)
         return Response(serializer.data)
 
-    # @action(["GET"], True, url_path=r"detail")
-    def retrieve(self, request, pk) -> Response:
+    @staticmethod
+    def retrieve(request, pk) -> Response:
         if request.user.id == int(pk):
-            user = request.user  # 현재 로그인한 사용자 정보를 사용
+            user = request.user
         else:
-            raise exceptions.InvalidTokenError
+            raise AuthorizationException
 
         serializer = ReadUserSerializer(user)
         return Response(serializer.data)
@@ -45,7 +43,7 @@ class UserViewSet(viewsets.GenericViewSet):
         ).first()
 
         if user:
-            return Response("duplicated login id", status=status.HTTP_404_NOT_FOUND)
+            raise DuplicatedUserLoginIdException
 
         instance = serializer.save()
 
@@ -61,9 +59,9 @@ class UserViewSet(viewsets.GenericViewSet):
         user: User | None = User.objects.filter(loginId=loginId).first()
 
         if not user:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            raise IdOrPasswordNotFoundException
         if not check_password(password, user.password):
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            raise IdOrPasswordNotFoundException
 
         access_token = JwtAuthentication.issue_token(user.id)
 
