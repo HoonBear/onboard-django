@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from dibs.models import DibsDetail, DibsGroup
+from dibs.paginator import DibsGroupPaginator
 from dibs.serializers import DibsDetailSerializer, DibsGroupSerializer
 from product.models import Product
 from server.exceptions import AuthorizationException, DuplicatedDibsGroupNameException, DuplicatedDibsProduct
@@ -14,6 +15,7 @@ from server.exceptions import AuthorizationException, DuplicatedDibsGroupNameExc
 class DibsGroupViewSet(viewsets.GenericViewSet):
     serializer_class = DibsGroupSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = DibsGroupPaginator
 
     def get_queryset(self):
         queryset = DibsGroup.objects.prefetch_related("dibsDetails__product").all()
@@ -51,9 +53,10 @@ class DibsGroupViewSet(viewsets.GenericViewSet):
         querySet: QuerySet[DibsGroup] = self.get_queryset().filter(
             user__id=request.user.id
         )
-
-        serializer = self.get_serializer(querySet, many=True)
-        return Response(serializer.data)
+        paginator = self.pagination_class()
+        paginated_queryset = paginator.paginate_queryset(querySet, request, view=self)
+        serializer = DibsGroupSerializer(paginated_queryset, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
     def retrieve(self, request, pk) -> Response:
         dibsGroup = get_object_or_404(
