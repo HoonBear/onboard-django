@@ -9,20 +9,6 @@ from server.authentication import JwtAuthentication
 from user.models import User
 from user.serializers import check_password, ReadUserSerializer, CreateUserSerializer
 
-
-# Create your views here.
-# @api_view(['GET'])
-# def getUsers(request):
-#     users = User.objects.all()
-#     serializer = GetUsersSerializer(users, many=True)
-#     return Response(serializer.data)
-#
-# @api_view(['GET'])
-# def getUser(request, pk):
-#     user = User.objects.filter(id=pk).first()
-#     serializer = GetUserSerializer(user)
-#     return Response(serializer.data)
-
 class UserViewSet(viewsets.GenericViewSet):
     # serializer_class = UserSerializer
 
