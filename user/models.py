@@ -20,3 +20,7 @@ class User(models.Model):
         constraints = (
             models.UniqueConstraint(fields=("loginId",), name="unique_login_id"),
         )
+
+    @property
+    def is_authenticated(self) -> bool:
+        return True

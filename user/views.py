@@ -1,9 +1,20 @@
+from django.contrib.auth import authenticate
 from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from django.conf import settings
+from jwt import exceptions
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 
+import jwt
+
+import server
+from server.authentication import JwtAuthentication
 from user.models import User
 from user.serializers import UserSerializer, check_password
 
@@ -47,12 +58,15 @@ class UserViewSet(viewsets.GenericViewSet):
 
     # @action(["GET"], True, url_path=r"detail")
     def retrieve(self, request, pk) -> Response:
-        user = get_object_or_404(User, pk=pk)
+        if request.user.id == int(pk):
+            user = request.user  # 현재 로그인한 사용자 정보를 사용
+        else:
+            raise exceptions.InvalidTokenError
 
         serializer = self.get_serializer(user)
         return Response(serializer.data)
 
-    @action(methods=['POST'], detail=False, url_path="login")
+    @action(methods=['POST'], detail=False, url_path="login", permission_classes=[AllowAny])
     def login(self, request) -> Response:
         loginId: str | None = request.data.get("loginId")
         password: str | None = request.data.get("password")
@@ -64,7 +78,7 @@ class UserViewSet(viewsets.GenericViewSet):
         if not check_password(password, user.password):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        access_token = "Todo. token"
+        access_token = JwtAuthentication.issue_token(user.id)
 
         return Response(
             {
