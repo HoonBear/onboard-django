@@ -3,6 +3,7 @@ from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404
 from jwt import exceptions
 from rest_framework import viewsets, status
+from rest_framework.exceptions import APIException
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -87,8 +88,7 @@ class DibsDetailViewSet(viewsets.GenericViewSet):
         queryset = DibsDetail.objects.all()
         return queryset
 
-    @staticmethod
-    def create(request, *args, **kwargs):
+    def create(self, request, *args, **kwargs):
         if request.user.id:
             user = request.user  # 현재 로그인한 사용자 정보를 사용
         else:
@@ -103,13 +103,18 @@ class DibsDetailViewSet(viewsets.GenericViewSet):
         productId = request.data["productId"]
         product = get_object_or_404(Product, pk=productId)
 
-        try:
-            dibsDetail = DibsDetail.objects.create(
-                dibsGroup=dibsGroup,
-                product=product,
-            )
-        except IntegrityError:
-            return Response("duplicated", status=status.HTTP_400_BAD_REQUEST)
+        dibsDetail = self.get_queryset().filter(
+            dibsGroup__user__id=user.id,
+            product_id=productId
+        ).select_related('dibsGroup__user').first()
+
+        if dibsDetail is not None:
+            return Response("duplicated your dibs", status=status.HTTP_400_BAD_REQUEST)
+
+        dibsDetail = DibsDetail.objects.create(
+            dibsGroup=dibsGroup,
+            product=product,
+        )
 
         return Response({"id": dibsDetail.id}, status=status.HTTP_201_CREATED)
 
