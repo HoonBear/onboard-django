@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 from server.authentication import JwtAuthentication
 from user.models import User
-from user.serializers import UserSerializer, check_password
+from user.serializers import check_password, ReadUserSerializer, CreateUserSerializer
 
 
 # Create your views here.
@@ -24,14 +24,14 @@ from user.serializers import UserSerializer, check_password
 #     return Response(serializer.data)
 
 class UserViewSet(viewsets.GenericViewSet):
-    serializer_class = UserSerializer
+    # serializer_class = UserSerializer
 
     def get_queryset(self):
         queryset = User.objects.all()
         return queryset
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        serializer = CreateUserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         instance = serializer.save()
@@ -44,7 +44,7 @@ class UserViewSet(viewsets.GenericViewSet):
         querySet: QuerySet[User] = (
             self.get_queryset()
         )
-        serializer = self.get_serializer(querySet, many=True)
+        serializer = ReadUserSerializer(querySet, many=True)
         return Response(serializer.data)
 
     # @action(["GET"], True, url_path=r"detail")
@@ -54,7 +54,7 @@ class UserViewSet(viewsets.GenericViewSet):
         else:
             raise exceptions.InvalidTokenError
 
-        serializer = self.get_serializer(user)
+        serializer = ReadUserSerializer(user)
         return Response(serializer.data)
 
     @action(methods=['POST'], detail=False, url_path="login", permission_classes=[AllowAny])

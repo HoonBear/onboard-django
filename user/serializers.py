@@ -17,7 +17,7 @@ def check_password(password: str, compare_password) -> bool:
 
     return bcrypt.checkpw(password.encode("utf-8"), compare_password.encode("utf-8"))
 
-class UserSerializer(serializers.Serializer):
+class CreateUserSerializer(serializers.Serializer):
 
     loginId = serializers.CharField()
     password = serializers.CharField()
@@ -34,3 +34,10 @@ class UserSerializer(serializers.Serializer):
         )
 
         return user
+
+class ReadUserSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    loginId = serializers.CharField()
+    name = serializers.CharField()
+    createdAt = serializers.DateTimeField()
+    modifiedAt = serializers.DateTimeField()
