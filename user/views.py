@@ -1,5 +1,5 @@
 from django.db.models import QuerySet
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, mixins
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -7,19 +7,23 @@ from rest_framework.response import Response
 from server.exceptions import DuplicatedUserLoginIdException, AuthorizationException, IdOrPasswordNotFoundException
 from server.authentication import JwtAuthentication
 from user.models import User
+from user.paginator import UserPaginator
 from user.serializers import CreateUserSerializer, ReadUserSerializer, check_password
 
 
-class UserViewSet(viewsets.GenericViewSet):
+class UserViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
+    pagination_class = UserPaginator
 
     def get_queryset(self):
         queryset = User.objects.all()
         return queryset
 
-    def list(self, request) -> Response:
-        querySet: QuerySet[User] = self.get_queryset()
-        serializer = ReadUserSerializer(querySet, many=True)
-        return Response(serializer.data)
+    def list(self, request, *args, **kwargs) -> Response:
+        querySet = self.get_queryset()
+        paginator = self.pagination_class()
+        paginated_queryset = paginator.paginate_queryset(querySet, request, view=self)
+        serializer = ReadUserSerializer(paginated_queryset, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
     @staticmethod
     def retrieve(request, pk) -> Response:
