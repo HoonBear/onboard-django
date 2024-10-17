@@ -31,13 +31,11 @@ class ProductViewSet(viewsets.GenericViewSet):
 
         return Response({"id": instance.id}, status=status.HTTP_201_CREATED)
 
-    # @action(["GET"], False, url_path=r"list")
     def list(self, request) -> Response:
         querySet: QuerySet[Product] = self.get_queryset()
         serializer = self.get_serializer(querySet, many=True)
         return Response(serializer.data)
 
-    # @action(["GET"], True, url_path=r"detail")
     def retrieve(self, request, pk) -> Response:
         product = get_object_or_404(Product, pk=pk)
 
