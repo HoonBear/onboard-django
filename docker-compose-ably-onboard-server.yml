@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  ably-onboard-server:
+    container_name: ably-onboard-server
+    image: ably-onboard-server:latest
+    restart: always
+    ports:
+      - "10001:8000"
+    environment:
+      - DATABASE_URL=postgres://pastel:1q2w3e4r@ably-onboard-db:5432/pastel
+    networks:
+      - ably-network
+    depends_on:
+      - ably-onboard-db
+    volumes:
+      - .:/app
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+
+  ably-onboard-db:
+    container_name: ably-onboard-db
+    image: postgres:15.5-alpine
+    environment:
+      POSTGRES_DB: pastel
+      POSTGRES_USER: pastel
+      POSTGRES_PASSWORD: 1q2w3e4r
+    ports:
+      - "10002:5432"
+    networks:
+      - ably-network
+
+networks:
+  ably-network:
+    driver: bridge
