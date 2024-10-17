@@ -87,11 +87,13 @@ class DibsDetailViewSet(viewsets.GenericViewSet):
         user = request.user
         dibsGroup = get_object_or_404(DibsGroup, pk=request.data["dibsGroupId"])
 
+        # 요청 찜 목록이 해당 회원의 목록이 아닐 경우 권한 없음
         if user.id != dibsGroup.user.id:
             raise AuthorizationException
 
         product = get_object_or_404(Product, pk=request.data["productId"])
 
+        # 회원은 하나의 상품을 하나의 찜 목록에만 등록 가능하다
         dibsDetail = (
             self.get_queryset()
             .filter(dibsGroup__user=user, product=product)
