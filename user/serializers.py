@@ -38,7 +38,15 @@ class CreateUserSerializer(serializers.Serializer):
         return user
 
 
-class ReadUserSerializer(serializers.Serializer):
+class ListUserSerializer(serializers.Serializer):
+
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    createdAt = serializers.DateTimeField()
+
+
+class RetrieveUserSerializer(serializers.Serializer):
+
     id = serializers.IntegerField()
     loginId = serializers.CharField()
     name = serializers.CharField()
