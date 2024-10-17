@@ -3,7 +3,7 @@ from rest_framework import serializers
 from .models import Product
 
 
-class ProductSerializer(serializers.Serializer):
+class CreateProductSerializer(serializers.Serializer):
 
     name = serializers.CharField()
     thumbnail = serializers.CharField()
@@ -16,3 +16,19 @@ class ProductSerializer(serializers.Serializer):
             price=validated_data["price"],
         )
         return product
+
+class ListProductSerializer(serializers.Serializer):
+
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    thumbnail = serializers.CharField()
+    price = serializers.IntegerField()
+
+class RetrieveProductSerializer(serializers.Serializer):
+
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    thumbnail = serializers.CharField()
+    price = serializers.IntegerField()
+    createdAt = serializers.DateTimeField()
+    modifiedAt = serializers.DateTimeField()

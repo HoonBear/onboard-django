@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from product.serializers import ProductSerializer
+from product.serializers import RetrieveProductSerializer
 
 
 class DibsDetailSerializer(serializers.Serializer):
@@ -8,7 +8,7 @@ class DibsDetailSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     createdAt = serializers.DateTimeField
     modifiedAt = serializers.DateTimeField
-    product = ProductSerializer(read_only=True)
+    product = RetrieveProductSerializer(read_only=True)
 
 
 class DibsGroupSerializer(serializers.Serializer):

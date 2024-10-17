@@ -5,13 +5,19 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from product.models import Product
-from product.serializers import ProductSerializer
+from product.serializers import CreateProductSerializer, ListProductSerializer, RetrieveProductSerializer
 
 
 # Create your views here.
 class ProductViewSet(viewsets.GenericViewSet):
-    serializer_class = ProductSerializer
     permission_classes = [AllowAny]  # 모든 요청 허용
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return CreateProductSerializer
+        if self.action == "list":
+            return ListProductSerializer
+        return RetrieveProductSerializer
 
     def get_queryset(self):
         queryset = Product.objects.all()
