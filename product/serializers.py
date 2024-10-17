@@ -32,3 +32,7 @@ class RetrieveProductSerializer(serializers.Serializer):
     price = serializers.IntegerField()
     createdAt = serializers.DateTimeField()
     modifiedAt = serializers.DateTimeField()
+
+class DibsDetailProductSerializer(serializers.Serializer):
+
+    thumbnail = serializers.CharField()
